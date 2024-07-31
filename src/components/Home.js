@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
 import Swal from 'sweetalert2';
 import Input from './form/URLInput';
+import { useNavigate } from 'react-router-dom';
 
 const Home = () => {
   const [url, setUrl] = useState('');
   const [message, setMessage] = useState('');
+
+  const navigate = useNavigate();
 
   const handleSubmit = e => {
     e.preventDefault();
@@ -28,6 +31,7 @@ const Home = () => {
       .then(data => {
         setMessage('URL added successfully!');
         setUrl('');
+        navigate('/urls');
       })
       .catch(err => {
         Swal.fire({
