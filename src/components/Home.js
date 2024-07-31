@@ -29,7 +29,7 @@ const Home = () => {
           confirmButtonText: 'OK'
         });
         setMessage('Failed to add URL.');
-        console.error(err);
+        // console.error(err);
       })
       .finally(() => {
         setLoading(false);

@@ -14,5 +14,17 @@ export default [
     }
   },
   pluginJs.configs.recommended,
-  pluginReactConfig
+  pluginReactConfig,
+  {
+    files: ['**/*.test.js'],
+    languageOptions: {
+      globals: {
+        ...globals.jest
+      }
+    },
+    rules: {
+      'no-undef': 'off',
+      'jest/no-mocks-import': 'off'
+    }
+  }
 ];
