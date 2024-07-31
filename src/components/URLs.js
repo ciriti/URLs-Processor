@@ -1,88 +1,50 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Swal from 'sweetalert2';
+import { useApi } from '../context/ApiContext';
 
 const URLs = () => {
   const [urls, setUrls] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const { fetchUrls, startProcessing, stopProcessing } = useApi();
 
   const fetchData = () => {
-    // Simulate fetching from the backend by using a timeout
-    setTimeout(() => {
-      const fakeUrls = [
-        { id: 1, url: 'http://example.com', status: 'pending' },
-        { id: 2, url: 'http://example.org', status: 'processing' },
-        { id: 3, url: 'http://example.net', status: 'stopped' }
-      ];
-      setUrls(fakeUrls);
-      console.log('refresh');
-    }, 1000);
+    fetchUrls()
+      .then(response => {
+        setUrls(response.data);
+        setLoading(false);
+        console.log('refresh');
+      })
+      .catch(error => {
+        setError(error.message);
+        setLoading(false);
+        Swal.fire({
+          title: 'Error!',
+          text: error.message,
+          icon: 'error',
+          confirmButtonText: 'OK'
+        });
+      });
   };
 
   useEffect(() => {
-    // const headers = new Headers();
-    // headers.append('Content-Type', 'application/json');
-
-    // const requestOptions = {
-    //   method: 'GET',
-    //   headers: headers
-    // };
-
-    // fetch(`${process.env.REACT_APP_BACKEND}api/urls`, requestOptions)
-    //   .then(response => {
-    //     if (!response.ok) {
-    //       throw new Error('Failed to fetch URLs');
-    //     }
-    //     return response.json();
-    //   })
-    //   .then(data => {
-    //     setUrls(data);
-    //   })
-    //   .catch(err => {
-    //     Swal.fire({
-    //       title: 'Error!',
-    //       text: err.message,
-    //       icon: 'error',
-    //       confirmButtonText: 'OK'
-    //     });
-    //   })
-    //   .finally(() => {
-    //     setLoading(false);
-    //   });
-    // setTimeout(() => {
-    //   const fakeUrls = [
-    //     { id: 1, url: 'http://example.com', status: 'pending' },
-    //     { id: 2, url: 'http://example.org', status: 'processing' },
-    //     { id: 3, url: 'http://example.net', status: 'stopped' }
-    //   ];
-    //   setUrls(fakeUrls);
-    //   setLoading(false);
-    // }, 1000);
     setLoading(true);
     fetchData();
-    setLoading(false);
     const interval = setInterval(fetchData, 5000);
 
     return () => clearInterval(interval);
   }, []);
 
   const handleStart = id => {
-    const requestOptions = {
-      method: 'POST'
-    };
-
-    fetch(`${process.env.REACT_APP_BACKEND}api/urls/${id}/start`, requestOptions)
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Failed to start processing');
-        }
+    startProcessing(id)
+      .then(() => {
         setUrls(urls.map(url => (url.id === id ? { ...url, status: 'processing' } : url)));
       })
       .catch(err => {
-        console.error('Failed to start processing:', err);
         Swal.fire({
           title: 'Error!',
-          text: 'Failed to start processing: ' + err.message,
+          text: `Failed to start processing: ${err.message}`,
           icon: 'error',
           confirmButtonText: 'OK'
         });
@@ -90,22 +52,14 @@ const URLs = () => {
   };
 
   const handleStop = id => {
-    const requestOptions = {
-      method: 'POST'
-    };
-
-    fetch(`${process.env.REACT_APP_BACKEND}api/urls/${id}/stop`, requestOptions)
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Failed to stop processing');
-        }
+    stopProcessing(id)
+      .then(() => {
         setUrls(urls.map(url => (url.id === id ? { ...url, status: 'stopped' } : url)));
       })
       .catch(err => {
-        console.error('Failed to stop processing:', err);
         Swal.fire({
           title: 'Error!',
-          text: 'Failed to stop processing: ' + err.message,
+          text: `Failed to stop processing: ${err.message}`,
           icon: 'error',
           confirmButtonText: 'OK'
         });
@@ -155,6 +109,7 @@ const URLs = () => {
           </tbody>
         </table>
       )}
+      {error && <div>Error: {error}</div>}
     </>
   );
 };

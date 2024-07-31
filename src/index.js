@@ -7,6 +7,7 @@ import Home from './components/Home';
 import URLs from './components/URLs';
 import URLDetails from './components/URLDetails';
 import Login from './components/Login';
+import { ApiProvider } from './context/ApiContext';
 
 const router = createBrowserRouter([
   {
@@ -34,6 +35,8 @@ const router = createBrowserRouter([
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    <ApiProvider>
+      <RouterProvider router={router} />
+    </ApiProvider>
   </React.StrictMode>
 );

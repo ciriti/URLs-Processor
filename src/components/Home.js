@@ -1,32 +1,21 @@
 import React, { useState } from 'react';
 import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
+import { useApi } from '../context/ApiContext';
 
 const Home = () => {
   const [url, setUrl] = useState('');
   const [message, setMessage] = useState('');
-
+  const [loading, setLoading] = useState(false);
+  
+  const { addUrl } = useApi();
   const navigate = useNavigate();
 
   const handleSubmit = e => {
     e.preventDefault();
+    setLoading(true);
 
-    const headers = new Headers();
-    headers.append('Content-Type', 'application/json');
-
-    const requestOptions = {
-      method: 'POST',
-      headers: headers,
-      body: JSON.stringify({ url })
-    };
-
-    fetch(`${process.env.REACT_APP_BACKEND}api/urls`, requestOptions)
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Failed to add URL.');
-        }
-        return response.json();
-      })
+    addUrl(url)
       .then(() => {
         setMessage('URL added successfully!');
         setUrl('');
@@ -41,6 +30,9 @@ const Home = () => {
         });
         setMessage('Failed to add URL.');
         console.error(err);
+      })
+      .finally(() => {
+        setLoading(false);
       });
   };
 
@@ -66,6 +58,7 @@ const Home = () => {
                 value={url}
                 onChange={e => setUrl(e.target.value)}
                 autoComplete="off"
+                disabled={loading}
               />
               {message.includes('Failed') && <div className="text-danger">{message}</div>}
             </div>
