@@ -9,7 +9,7 @@ export default [
   {
     settings: {
       react: {
-        version: '18.3.1' // Specify the React version explicitly
+        version: '18.3.1'
       }
     }
   },

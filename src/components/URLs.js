@@ -6,6 +6,19 @@ const URLs = () => {
   const [urls, setUrls] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const fetchData = () => {
+    // Simulate fetching from the backend by using a timeout
+    setTimeout(() => {
+      const fakeUrls = [
+        { id: 1, url: 'http://example.com', status: 'pending' },
+        { id: 2, url: 'http://example.org', status: 'processing' },
+        { id: 3, url: 'http://example.net', status: 'stopped' }
+      ];
+      setUrls(fakeUrls);
+      console.log('refresh');
+    }, 1000);
+  };
+
   useEffect(() => {
     // const headers = new Headers();
     // headers.append('Content-Type', 'application/json');
@@ -36,15 +49,21 @@ const URLs = () => {
     //   .finally(() => {
     //     setLoading(false);
     //   });
-    setTimeout(() => {
-      const fakeUrls = [
-        { id: 1, url: 'http://example.com', status: 'pending' },
-        { id: 2, url: 'http://example.org', status: 'processing' },
-        { id: 3, url: 'http://example.net', status: 'stopped' }
-      ];
-      setUrls(fakeUrls);
-      setLoading(false);
-    }, 1000);
+    // setTimeout(() => {
+    //   const fakeUrls = [
+    //     { id: 1, url: 'http://example.com', status: 'pending' },
+    //     { id: 2, url: 'http://example.org', status: 'processing' },
+    //     { id: 3, url: 'http://example.net', status: 'stopped' }
+    //   ];
+    //   setUrls(fakeUrls);
+    //   setLoading(false);
+    // }, 1000);
+    setLoading(true);
+    fetchData();
+    setLoading(false);
+    const interval = setInterval(fetchData, 5000);
+
+    return () => clearInterval(interval);
   }, []);
 
   const handleStart = id => {
