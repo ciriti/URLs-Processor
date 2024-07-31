@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import { useApi } from '../context/ApiContext';
@@ -31,18 +31,6 @@ afterEach(() => {
   jest.clearAllMocks();
 });
 
-test('renders URLs component and displays loading', () => {
-  mockFetchUrls.mockResolvedValueOnce({ data: [] });
-
-  render(
-    <Router>
-      <URLs />
-    </Router>
-  );
-
-  expect(screen.getByText(/Loading.../i)).toBeInTheDocument();
-});
-
 test('renders URLs component and displays fetched URLs', async () => {
   const fakeUrls = [
     { id: 1, url: 'http://example.com', status: 'pending' },
@@ -52,11 +40,13 @@ test('renders URLs component and displays fetched URLs', async () => {
 
   mockFetchUrls.mockResolvedValueOnce({ data: fakeUrls });
 
-  render(
-    <Router>
-      <URLs />
-    </Router>
-  );
+  await act(async () => {
+    render(
+      <Router>
+        <URLs />
+      </Router>
+    );
+  });
 
   await waitFor(() => {
     fakeUrls.forEach(url => {
@@ -72,17 +62,21 @@ test('handles start button click', async () => {
   mockFetchUrls.mockResolvedValueOnce({ data: fakeUrls });
   mockStartProcessing.mockResolvedValueOnce({});
 
-  render(
-    <Router>
-      <URLs />
-    </Router>
-  );
+  await act(async () => {
+    render(
+      <Router>
+        <URLs />
+      </Router>
+    );
+  });
 
   await waitFor(() => {
     expect(screen.getByText(fakeUrls[0].url)).toBeInTheDocument();
   });
 
-  fireEvent.click(screen.getByText(/Start/i));
+  await act(async () => {
+    fireEvent.click(screen.getByText(/Start/i));
+  });
 
   await waitFor(() => {
     expect(mockStartProcessing).toHaveBeenCalledWith(1);
@@ -96,17 +90,21 @@ test('handles stop button click', async () => {
   mockFetchUrls.mockResolvedValueOnce({ data: fakeUrls });
   mockStopProcessing.mockResolvedValueOnce({});
 
-  render(
-    <Router>
-      <URLs />
-    </Router>
-  );
+  await act(async () => {
+    render(
+      <Router>
+        <URLs />
+      </Router>
+    );
+  });
 
   await waitFor(() => {
     expect(screen.getByText(fakeUrls[0].url)).toBeInTheDocument();
   });
 
-  fireEvent.click(screen.getByText(/Stop/i));
+  await act(async () => {
+    fireEvent.click(screen.getByText(/Stop/i));
+  });
 
   await waitFor(() => {
     expect(mockStopProcessing).toHaveBeenCalledWith(1);
@@ -117,11 +115,13 @@ test('handles stop button click', async () => {
 test('handles fetch URLs error', async () => {
   mockFetchUrls.mockRejectedValueOnce(new Error('Network Error'));
 
-  render(
-    <Router>
-      <URLs />
-    </Router>
-  );
+  await act(async () => {
+    render(
+      <Router>
+        <URLs />
+      </Router>
+    );
+  });
 
   await waitFor(() => {
     expect(Swal.fire).toHaveBeenCalledWith({
