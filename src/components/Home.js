@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
+import Swal from 'sweetalert2';
 import Input from './form/URLInput';
 
 const Home = () => {
   const [url, setUrl] = useState('');
   const [message, setMessage] = useState('');
 
-  const handleSubmit = async e => {
+  const handleSubmit = e => {
     e.preventDefault();
 
     const headers = new Headers();
@@ -17,19 +18,27 @@ const Home = () => {
       body: JSON.stringify({ url })
     };
 
-    try {
-      const response = await fetch(`${process.env.REACT_APP_BACKEND}api/urls`, requestOptions);
-      if (response.ok) {
-        const data = await response.json();
+    fetch(`${process.env.REACT_APP_BACKEND}api/urls`, requestOptions)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Failed to add URL.');
+        }
+        return response.json();
+      })
+      .then(data => {
         setMessage('URL added successfully!');
-        setUrl(''); // Clear the input field
-      } else {
+        setUrl('');
+      })
+      .catch(err => {
+        Swal.fire({
+          title: 'Error!',
+          text: err.message,
+          icon: 'error',
+          confirmButtonText: 'OK'
+        });
         setMessage('Failed to add URL.');
-      }
-    } catch (error) {
-      setMessage('Failed to add URL.');
-      console.error(error);
-    }
+        console.error(err);
+      });
   };
 
   return (
