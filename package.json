@@ -3,12 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@testing-library/jest-dom": "^5.17.0",
-    "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
+    "axios": "^1.7.2",
+    "prop-types": "^15.8.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "react-router-dom": "^6.25.1",
     "react-scripts": "5.0.1",
+    "sweetalert2": "^11.12.3",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
@@ -22,6 +24,20 @@
     "extends": [
       "react-app",
       "react-app/jest"
+    ],
+    "overrides": [
+      {
+        "files": [
+          "**/*.test.js"
+        ],
+        "env": {
+          "jest": true
+        },
+        "rules": {
+          "no-undef": "off",
+          "jest/no-mocks-import": "off"
+        }
+      }
     ]
   },
   "browserslist": {
@@ -37,12 +53,17 @@
     ]
   },
   "devDependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@eslint/js": "^9.8.0",
+    "@testing-library/jest-dom": "^6.4.8",
+    "@testing-library/react": "^16.0.0",
     "eslint": "^8.57.0",
     "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-jest": "^25.7.0",
     "eslint-plugin-jsx-a11y": "^6.9.0",
     "eslint-plugin-react": "^7.35.0",
     "eslint-plugin-react-hooks": "^4.6.2",
-    "globals": "^15.8.0"
+    "globals": "^15.8.0",
+    "jest": "^27.5.1"
   }
 }
