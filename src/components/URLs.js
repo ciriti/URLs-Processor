@@ -7,35 +7,44 @@ const URLs = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const headers = new Headers();
-    headers.append('Content-Type', 'application/json');
+    // const headers = new Headers();
+    // headers.append('Content-Type', 'application/json');
 
-    const requestOptions = {
-      method: 'GET',
-      headers: headers
-    };
+    // const requestOptions = {
+    //   method: 'GET',
+    //   headers: headers
+    // };
 
-    fetch(`${process.env.REACT_APP_BACKEND}api/urls`, requestOptions)
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Failed to fetch URLs');
-        }
-        return response.json();
-      })
-      .then(data => {
-        setUrls(data);
-      })
-      .catch(err => {
-        Swal.fire({
-          title: 'Error!',
-          text: err.message,
-          icon: 'error',
-          confirmButtonText: 'OK'
-        });
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+    // fetch(`${process.env.REACT_APP_BACKEND}api/urls`, requestOptions)
+    //   .then(response => {
+    //     if (!response.ok) {
+    //       throw new Error('Failed to fetch URLs');
+    //     }
+    //     return response.json();
+    //   })
+    //   .then(data => {
+    //     setUrls(data);
+    //   })
+    //   .catch(err => {
+    //     Swal.fire({
+    //       title: 'Error!',
+    //       text: err.message,
+    //       icon: 'error',
+    //       confirmButtonText: 'OK'
+    //     });
+    //   })
+    //   .finally(() => {
+    //     setLoading(false);
+    //   });
+    setTimeout(() => {
+      const fakeUrls = [
+        { id: 1, url: 'http://example.com', status: 'pending' },
+        { id: 2, url: 'http://example.org', status: 'processing' },
+        { id: 3, url: 'http://example.net', status: 'stopped' }
+      ];
+      setUrls(fakeUrls);
+      setLoading(false);
+    }, 1000);
   }, []);
 
   const handleStart = id => {

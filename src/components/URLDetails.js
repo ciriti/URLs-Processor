@@ -8,7 +8,7 @@ const URLDetails = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchDetails = async () => {
+    /*const fetchDetails = async () => {
       try {
         const response = await fetch(`${process.env.REACT_APP_BACKEND}api/urls/${id}`);
         if (!response.ok) {
@@ -23,7 +23,25 @@ const URLDetails = () => {
       }
     };
 
-    fetchDetails();
+    fetchDetails();*/
+
+    setError('for Now I need it like this');
+    setTimeout(() => {
+      const fakeDetails = {
+        id,
+        url: 'http://example.com',
+        status: 'pending',
+        results: {
+          html_version: 'HTML5',
+          page_title: 'Example Title',
+          headings: { h1: 1, h2: 2, h3: 3 },
+          links: { internal: 5, external: 10, inaccessible: 2 },
+          login_form_present: true
+        }
+      };
+      setDetails(fakeDetails);
+      setLoading(false);
+    }, 1000);
   }, [id]);
 
   return (

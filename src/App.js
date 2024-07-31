@@ -4,8 +4,6 @@ import { Link, Outlet } from 'react-router-dom';
 
 function App() {
   const [jwtToken, setJwtToken] = useState('');
-  const [alertMessage, setAlertMessage] = useState('');
-  const [alertClassName, setAlertClassName] = useState('d-none');
 
   return (
     <div className="container">
@@ -41,9 +39,7 @@ function App() {
           <Outlet
             context={{
               jwtToken,
-              setJwtToken,
-              setAlertClassName,
-              setAlertMessage
+              setJwtToken
             }}
           />
         </div>

@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useNavigate, useOutletContext } from 'react-router-dom';
-import Input from './form/Input';
 import Swal from 'sweetalert2';
 
 const Login = () => {
@@ -54,24 +53,34 @@ const Login = () => {
       <h2>Login</h2>
       <hr />
       <form onSubmit={handleSubmit}>
-        <Input
-          title="Email Address"
-          type="email"
-          className="form-control"
-          name="email"
-          autoComplete="email-new"
-          value={email}
-          onChange={event => setEmail(event.target.value)}
-        />
-        <Input
-          title="Password"
-          type="password"
-          className="form-control"
-          name="password"
-          autoComplete="password-new"
-          value={password}
-          onChange={event => setPassword(event.target.value)}
-        />
+        <div className="mb-3">
+          <label htmlFor="email" className="form-label">
+            Email Address
+          </label>
+          <input
+            type="email"
+            className="form-control"
+            id="email"
+            name="email"
+            autoComplete="email-new"
+            value={email}
+            onChange={event => setEmail(event.target.value)}
+          />
+        </div>
+        <div className="mb-3">
+          <label htmlFor="password" className="form-label">
+            Password
+          </label>
+          <input
+            type="password"
+            className="form-control"
+            id="password"
+            name="password"
+            autoComplete="password-new"
+            value={password}
+            onChange={event => setPassword(event.target.value)}
+          />
+        </div>
         <hr />
         <input type="submit" className="btn btn-primary" value="Login" />
       </form>

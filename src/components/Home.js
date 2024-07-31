@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import Swal from 'sweetalert2';
-import Input from './form/URLInput';
 import { useNavigate } from 'react-router-dom';
 
 const Home = () => {
@@ -28,7 +27,7 @@ const Home = () => {
         }
         return response.json();
       })
-      .then(data => {
+      .then(() => {
         setMessage('URL added successfully!');
         setUrl('');
         navigate('/urls');
@@ -54,18 +53,22 @@ const Home = () => {
       <div className="row">
         <div className="col-12">
           <form onSubmit={handleSubmit}>
-            <Input
-              type="url"
-              className="form-control"
-              name="url"
-              title="URL"
-              placeholder="Enter URL"
-              value={url}
-              onChange={e => setUrl(e.target.value)}
-              autoComplete="off"
-              errorDiv="text-danger"
-              errorMsg={message.includes('Failed') ? message : ''}
-            />
+            <div className="mb-3">
+              <label htmlFor="url" className="form-label">
+                URL
+              </label>
+              <input
+                type="url"
+                className="form-control"
+                id="url"
+                name="url"
+                placeholder="Enter URL"
+                value={url}
+                onChange={e => setUrl(e.target.value)}
+                autoComplete="off"
+              />
+              {message.includes('Failed') && <div className="text-danger">{message}</div>}
+            </div>
             <button type="submit" className="btn btn-primary mt-3">
               Add URL
             </button>
