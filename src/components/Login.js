@@ -1,39 +1,26 @@
 import React, { useState } from 'react';
 import { useNavigate, useOutletContext } from 'react-router-dom';
+import { useApi } from '../context/ApiContext';
 import Swal from 'sweetalert2';
 
 const Login = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [user, setUser] = useState('');
+  const [pass, setPass] = useState('');
 
-  const { setJwtToken, toggleRefresh } = useOutletContext();
+  const { setJwtToken } = useOutletContext();
   const navigate = useNavigate();
+  const { authenticate } = useApi();
 
   const handleSubmit = event => {
     event.preventDefault();
 
-    const payload = {
-      email: email,
-      password: password
-    };
-
-    const requestOptions = {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      credentials: 'include',
-      body: JSON.stringify(payload)
-    };
-
-    fetch(`${process.env.REACT_APP_BACKEND}authenticate`, requestOptions)
-      .then(response => response.json())
-      .then(data => {
+    authenticate(user, pass)
+      .then(response => {
+        const data = response.data;
         if (data.error) {
           console.log(data);
         } else {
-          setJwtToken(data.access_token);
-          toggleRefresh(true);
+          setJwtToken(data.token);
           navigate('/');
         }
       })
@@ -54,31 +41,31 @@ const Login = () => {
       <hr />
       <form onSubmit={handleSubmit}>
         <div className="mb-3">
-          <label htmlFor="email" className="form-label">
-            Email Address
+          <label htmlFor="user" className="form-label">
+            Username
           </label>
           <input
-            type="email"
+            type="text"
             className="form-control"
-            id="email"
-            name="email"
-            autoComplete="email-new"
-            value={email}
-            onChange={event => setEmail(event.target.value)}
+            id="user"
+            name="user"
+            autoComplete="username"
+            value={user}
+            onChange={event => setUser(event.target.value)}
           />
         </div>
         <div className="mb-3">
-          <label htmlFor="password" className="form-label">
+          <label htmlFor="pass" className="form-label">
             Password
           </label>
           <input
             type="password"
             className="form-control"
-            id="password"
-            name="password"
-            autoComplete="password-new"
-            value={password}
-            onChange={event => setPassword(event.target.value)}
+            id="pass"
+            name="pass"
+            autoComplete="current-password"
+            value={pass}
+            onChange={event => setPass(event.target.value)}
           />
         </div>
         <hr />
