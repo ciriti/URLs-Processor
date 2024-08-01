@@ -3,11 +3,11 @@ import Swal from 'sweetalert2';
 import { useNavigate } from 'react-router-dom';
 import { useApi } from '../context/ApiContext';
 
-const Home = () => {
+const AddURLs = () => {
   const [url, setUrl] = useState('');
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
-  
+
   const { addUrl } = useApi();
   const navigate = useNavigate();
 
@@ -73,4 +73,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default AddURLs;

@@ -1,9 +1,38 @@
-import React, { useState } from 'react';
-
+import React, { useEffect, useState } from 'react';
 import { Link, Outlet } from 'react-router-dom';
+import { useApi } from './context/ApiContext';
+import Swal from 'sweetalert2';
 
 function App() {
-  const [jwtToken, setJwtToken] = useState('');
+  const [jwtToken, setJwtToken] = useState(() => {
+    return localStorage.getItem('jwtToken') || '';
+  });
+  const { logout } = useApi();
+
+  useEffect(() => {
+    localStorage.setItem('jwtToken', jwtToken);
+  }, [jwtToken]);
+
+  const logOut = () => {
+    logout()
+      .then(response => {
+        const data = response.data;
+        if (data.error) {
+          console.log(data);
+        } else {
+          setJwtToken('');
+        }
+      })
+      .catch(error => {
+        console.log(error.message);
+        Swal.fire({
+          title: 'Error!',
+          text: error.message,
+          icon: 'error',
+          confirmButtonText: 'OK'
+        });
+      });
+  };
 
   return (
     <div className="container">
@@ -12,38 +41,51 @@ function App() {
           <h1 className="mt-3">URLs Processor</h1>
         </div>
         <div className="col text-end">
-          <Link to="/login">
-            <span className="badge bg-success">Login</span>
-          </Link>
+          {jwtToken && (
+            <a href="#!" onClick={logOut}>
+              <span className="badge bg-danger">Logout</span>
+            </a>
+          )}
         </div>
         <hr className="mb-3"></hr>
       </div>
 
-      <div className="row">
-        <div className="col-md-2">
-          <nav>
-            <div className="list-group">
-              <Link to="/" className="list-group-item list-group-item-action">
-                Home
-              </Link>
-              <Link to="/urls" className="list-group-item list-group-item-action">
-                URLs
-              </Link>
-              <Link to="/urls/0" className="list-group-item list-group-item-action">
-                Details
-              </Link>
-            </div>
-          </nav>
+      {jwtToken && (
+        <div className="row">
+          <div className="col-md-2">
+            <nav>
+              <div className="list-group">
+                <Link to="/" className="list-group-item list-group-item-action">
+                  Add URLs
+                </Link>
+                <Link to="/urls" className="list-group-item list-group-item-action">
+                  URLs
+                </Link>
+                <Link to="/urls/0" className="list-group-item list-group-item-action">
+                  Details
+                </Link>
+              </div>
+            </nav>
+          </div>
+          <div className="col-md-10">
+            <Outlet
+              context={{
+                jwtToken,
+                setJwtToken
+              }}
+            />
+          </div>
         </div>
-        <div className="col-md-10">
-          <Outlet
-            context={{
-              jwtToken,
-              setJwtToken
-            }}
-          />
-        </div>
-      </div>
+      )}
+
+      {!jwtToken && (
+        <Outlet
+          context={{
+            jwtToken,
+            setJwtToken
+          }}
+        />
+      )}
     </div>
   );
 }

@@ -2,8 +2,8 @@ import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { useApi } from '../context/ApiContext';
-import Home from './Home';
 import '@testing-library/jest-dom';
+import AddURLs from './AddURLs';
 
 // Mock useApi hook
 jest.mock('../context/ApiContext', () => ({
@@ -33,7 +33,7 @@ afterEach(() => {
 test('renders Home component', () => {
   render(
     <Router>
-      <Home />
+      <AddURLs />
     </Router>
   );
 
@@ -49,7 +49,7 @@ test('handles form submission error', async () => {
 
   render(
     <Router>
-      <Home />
+      <AddURLs />
     </Router>
   );
 
