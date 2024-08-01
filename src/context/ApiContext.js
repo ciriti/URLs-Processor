@@ -37,8 +37,17 @@ export const ApiProvider = ({ children }) => {
     return axios.post(`${BASE_URL}api/urls/${id}/stop`);
   };
 
+  const authenticate = (user, pass) => {
+    return axios.post(
+      `${BASE_URL}/authenticate`,
+      { user, pass },
+      { headers: { 'Content-Type': 'application/json' }, withCredentials: true }
+    );
+  };
+
   return (
-    <ApiContext.Provider value={{ addUrl, fetchUrls, startProcessing, stopProcessing }}>
+    <ApiContext.Provider
+      value={{ addUrl, fetchUrls, startProcessing, stopProcessing, authenticate }}>
       {children}
     </ApiContext.Provider>
   );
