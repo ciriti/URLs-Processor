@@ -15,26 +15,60 @@ export const ApiProvider = ({ children }) => {
     );
   };
 
-  const fetchUrls = () => {
-    // Simulate fetching from the backend by using a timeout
-    return new Promise(resolve => {
-      setTimeout(() => {
-        const fakeUrls = [
-          { id: 1, url: 'http://example.com', status: 'pending' },
-          { id: 2, url: 'http://example.org', status: 'processing' },
-          { id: 3, url: 'http://example.net', status: 'stopped' }
-        ];
-        resolve({ data: fakeUrls });
-      }, 1000);
+  const addUrls = (urls, token) => {
+    return axios.post(
+      `${BASE_URL}/api/urls`,
+      { urls },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        }
+      }
+    );
+  };
+
+  const fetchUrls = token => {
+    return axios.get(`${BASE_URL}/api/urls`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
     });
   };
 
-  const startProcessing = id => {
-    return axios.post(`${BASE_URL}api/urls/${id}/start`);
+  const fetchUrl = (id, token) => {
+    return axios.get(`${BASE_URL}/api/url`, {
+      params: { id },
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
   };
 
-  const stopProcessing = id => {
-    return axios.post(`${BASE_URL}api/urls/${id}/stop`);
+  const startProcessing = (id, token) => {
+    return axios.post(
+      `${BASE_URL}/api/start`,
+      { id },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        }
+      }
+    );
+  };
+
+  const stopProcessing = (id, token) => {
+    return axios.post(
+      `${BASE_URL}/api/stop`,
+      { id: id },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        }
+      }
+    );
   };
 
   const authenticate = (user, pass) => {
@@ -45,9 +79,22 @@ export const ApiProvider = ({ children }) => {
     );
   };
 
+  const logout = () => {
+    return axios.get(`${BASE_URL}/logout`, { withCredentials: true });
+  };
+
   return (
     <ApiContext.Provider
-      value={{ addUrl, fetchUrls, startProcessing, stopProcessing, authenticate }}>
+      value={{
+        addUrl,
+        fetchUrls,
+        startProcessing,
+        stopProcessing,
+        authenticate,
+        logout,
+        addUrls,
+        fetchUrl
+      }}>
       {children}
     </ApiContext.Provider>
   );
