@@ -45,9 +45,13 @@ export const ApiProvider = ({ children }) => {
     );
   };
 
+  const logout = () => {
+    return axios.get(`${BASE_URL}/logout`, { withCredentials: true });
+  };
+
   return (
     <ApiContext.Provider
-      value={{ addUrl, fetchUrls, startProcessing, stopProcessing, authenticate }}>
+      value={{ addUrl, fetchUrls, startProcessing, stopProcessing, authenticate, logout }}>
       {children}
     </ApiContext.Provider>
   );

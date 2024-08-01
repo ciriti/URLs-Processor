@@ -3,11 +3,11 @@ import ReactDOM from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import App from './App';
 import ErrorPage from './components/ErrorPage';
-import Home from './components/Home';
 import URLs from './components/URLs';
 import URLDetails from './components/URLDetails';
 import Login from './components/Login';
 import { ApiProvider } from './context/ApiContext';
+import AddUrlsOrLogin from './components/AddUrlsOrLogin';
 
 const router = createBrowserRouter([
   {
@@ -15,7 +15,7 @@ const router = createBrowserRouter([
     element: <App />,
     errorElement: <ErrorPage />,
     children: [
-      { index: true, element: <Home /> },
+      { index: true, element: <AddUrlsOrLogin /> },
       {
         path: '/urls',
         element: <URLs />
