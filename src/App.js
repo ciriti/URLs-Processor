@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link, Outlet } from 'react-router-dom';
+import { Link, Outlet, useNavigate } from 'react-router-dom';
 import { useApi } from './context/ApiContext';
 import Swal from 'sweetalert2';
 
@@ -8,6 +8,7 @@ function App() {
     return localStorage.getItem('jwtToken') || '';
   });
   const { logout } = useApi();
+  const navigate = useNavigate();
 
   useEffect(() => {
     localStorage.setItem('jwtToken', jwtToken);
@@ -21,6 +22,7 @@ function App() {
           console.log(data);
         } else {
           setJwtToken('');
+          navigate('/');
         }
       })
       .catch(error => {
@@ -60,9 +62,6 @@ function App() {
                 </Link>
                 <Link to="/urls" className="list-group-item list-group-item-action">
                   URLs
-                </Link>
-                <Link to="/urls/0" className="list-group-item list-group-item-action">
-                  Details
                 </Link>
               </div>
             </nav>

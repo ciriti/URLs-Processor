@@ -4,8 +4,8 @@ import { useApi } from '../context/ApiContext';
 import Swal from 'sweetalert2';
 
 const Login = () => {
-  const [user, setUser] = useState('');
-  const [pass, setPass] = useState('');
+  const [user, setUser] = useState(process.env.REACT_APP_USER_DEV);
+  const [pass, setPass] = useState(process.env.REACT_APP_PASS_DEV);
 
   const { setJwtToken } = useOutletContext();
   const navigate = useNavigate();

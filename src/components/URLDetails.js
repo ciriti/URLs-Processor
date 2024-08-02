@@ -1,48 +1,48 @@
-import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useEffect, useState, useCallback } from 'react';
+import { useOutletContext, useParams } from 'react-router-dom';
+import { useApi } from '../context/ApiContext';
+import Swal from 'sweetalert2';
 
 const URLDetails = () => {
   const { id } = useParams();
   const [details, setDetails] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { fetchUrl } = useApi();
+  const { jwtToken } = useOutletContext();
+
+  const fetchData = useCallback(
+    (isPeriodic = false) => {
+      console.log('refresh');
+      fetchUrl(id, jwtToken)
+        .then(response => {
+          setDetails(response.data);
+          setLoading(false);
+          console.log('Data refreshed');
+        })
+        .catch(error => {
+          setError(error.message);
+          if (!isPeriodic) {
+            Swal.fire({
+              title: 'Error!',
+              text: error.message,
+              icon: 'error',
+              confirmButtonText: 'OK'
+            });
+          }
+        });
+    },
+    [id, jwtToken, fetchUrl]
+  );
 
   useEffect(() => {
-    /*const fetchDetails = async () => {
-      try {
-        const response = await fetch(`${process.env.REACT_APP_BACKEND}api/urls/${id}`);
-        if (!response.ok) {
-          throw new Error('Failed to fetch URL details');
-        }
-        const data = await response.json();
-        setDetails(data);
-      } catch (error) {
-        setError(error.message);
-      } finally {
-        setLoading(false);
-      }
-    };
+    setLoading(true);
+    fetchData();
+    setLoading(false);
+    const interval = setInterval(() => fetchData(true), 2000);
 
-    fetchDetails();*/
-
-    setError('for Now I need it like this');
-    setTimeout(() => {
-      const fakeDetails = {
-        id,
-        url: 'http://example.com',
-        status: 'pending',
-        results: {
-          html_version: 'HTML5',
-          page_title: 'Example Title',
-          headings: { h1: 1, h2: 2, h3: 3 },
-          links: { internal: 5, external: 10, inaccessible: 2 },
-          login_form_present: true
-        }
-      };
-      setDetails(fakeDetails);
-      setLoading(false);
-    }, 1000);
-  }, [id]);
+    return () => clearInterval(interval);
+  }, [fetchData]);
 
   return (
     <div>
@@ -59,37 +59,44 @@ const URLDetails = () => {
             <strong>URL:</strong> {details.url}
           </p>
           <p>
-            <strong>Status:</strong> {details.status}
+            <strong>Status:</strong> {details.state}
           </p>
-          <h3>Results:</h3>
-          <p>
-            <strong>HTML Version:</strong> {details.results.html_version}
-          </p>
-          <p>
-            <strong>Page Title:</strong> {details.results.page_title}
-          </p>
-          <p>
-            <strong>Headings Count:</strong>
-          </p>
-          <ul>
-            {Object.entries(details.results.headings).map(([level, count]) => (
-              <li key={level}>
-                {level}: {count}
-              </li>
-            ))}
-          </ul>
-          <p>
-            <strong>Internal Links:</strong> {details.results.links.internal}
-          </p>
-          <p>
-            <strong>External Links:</strong> {details.results.links.external}
-          </p>
-          <p>
-            <strong>Inaccessible Links:</strong> {details.results.links.inaccessible}
-          </p>
-          <p>
-            <strong>Login Form Present:</strong> {details.results.login_form_present ? 'Yes' : 'No'}
-          </p>
+          {details.processed_data ? (
+            <div>
+              <h3>Results:</h3>
+              <p>
+                <strong>HTML Version:</strong> {details.processed_data.html_version}
+              </p>
+              <p>
+                <strong>Page Title:</strong> {details.processed_data.page_title}
+              </p>
+              <p>
+                <strong>Headings Count:</strong>
+              </p>
+              <ul>
+                {Object.entries(details.processed_data.heading_tags_count).map(([level, count]) => (
+                  <li key={level}>
+                    {level}: {count}
+                  </li>
+                ))}
+              </ul>
+              <p>
+                <strong>Internal Links:</strong> {details.processed_data.internal_links}
+              </p>
+              <p>
+                <strong>External Links:</strong> {details.processed_data.external_links}
+              </p>
+              <p>
+                <strong>Inaccessible Links:</strong> {details.processed_data.inaccessible_links}
+              </p>
+              <p>
+                <strong>Login Form Present:</strong>{' '}
+                {details.processed_data.has_login_form ? 'Yes' : 'No'}
+              </p>
+            </div>
+          ) : (
+            <div>Processing...</div>
+          )}
         </div>
       )}
       {!loading && !error && !details && <div>No details found for this URL.</div>}
