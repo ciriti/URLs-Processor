@@ -1,36 +1,43 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { BrowserRouter as Router } from 'react-router-dom';
-import { useApi } from '../context/ApiContext';
+import Swal from 'sweetalert2';
 import '@testing-library/jest-dom';
 import AddURLs from './AddURLs';
+import { useApi } from '../context/ApiContext';
 
 // Mock useApi hook
 jest.mock('../context/ApiContext', () => ({
   useApi: jest.fn()
 }));
 
-// Mock useNavigate hook
+// Mock useNavigate hook and useOutletContext hook
+const mockNavigate = jest.fn();
+
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
-  useNavigate: jest.fn()
+  useNavigate: () => mockNavigate,
+  useOutletContext: () => ({ jwtToken: 'mockToken' })
 }));
 
-const mockAddUrl = jest.fn();
-const mockNavigate = jest.fn();
+// Mock Swal
+jest.mock('sweetalert2', () => ({
+  fire: jest.fn()
+}));
+
+const mockAddUrls = jest.fn();
 
 beforeEach(() => {
   useApi.mockReturnValue({
-    addUrl: mockAddUrl
+    addUrls: mockAddUrls
   });
-  require('react-router-dom').useNavigate.mockReturnValue(mockNavigate);
 });
 
 afterEach(() => {
   jest.clearAllMocks();
 });
 
-test('renders Home component', () => {
+test('renders AddURLs component', () => {
   render(
     <Router>
       <AddURLs />
@@ -38,14 +45,14 @@ test('renders Home component', () => {
   );
 
   // Check for the heading
-  expect(screen.getByRole('heading', { name: /Add URL/i })).toBeInTheDocument();
+  expect(screen.getByRole('heading', { name: /Add URLs/i })).toBeInTheDocument();
 
   // Check for the button
   expect(screen.getByRole('button', { name: /Add URL/i })).toBeInTheDocument();
 });
 
-test('handles form submission error', async () => {
-  mockAddUrl.mockRejectedValueOnce(new Error('Network Error'));
+test('handles URL submission error', async () => {
+  mockAddUrls.mockRejectedValueOnce(new Error('Network Error'));
 
   render(
     <Router>
@@ -59,9 +66,51 @@ test('handles form submission error', async () => {
 
   fireEvent.click(screen.getByRole('button', { name: /Add URL/i }));
 
+  fireEvent.click(screen.getByRole('button', { name: /Upload All URLs/i }));
+
   await waitFor(() => {
-    expect(mockAddUrl).toHaveBeenCalledWith('http://example.com');
-    expect(screen.getByText(/Failed to add URL./i)).toBeInTheDocument();
-    expect(screen.getByText(/Network Error/i)).toBeInTheDocument();
+    expect(Swal.fire).toHaveBeenCalledWith({
+      title: 'Error!',
+      text: 'Network Error',
+      icon: 'error',
+      confirmButtonText: 'OK'
+    });
+  });
+});
+
+test('handles successful URL submission', async () => {
+  mockAddUrls.mockResolvedValueOnce(); // Ensure addUrls resolves successfully
+
+  render(
+    <Router>
+      <AddURLs />
+    </Router>
+  );
+
+  // Add URLs
+  fireEvent.change(screen.getByPlaceholderText(/Enter URL/i), {
+    target: { value: 'http://example.com' }
+  });
+
+  fireEvent.click(screen.getByRole('button', { name: /Add URL/i }));
+
+  fireEvent.change(screen.getByPlaceholderText(/Enter URL/i), {
+    target: { value: 'http://example.org' }
+  });
+
+  fireEvent.click(screen.getByRole('button', { name: /Add URL/i }));
+
+  // Submit URLs
+  fireEvent.click(screen.getByRole('button', { name: /Upload All URLs/i }));
+
+  await waitFor(() => {
+    expect(mockAddUrls).toHaveBeenCalledWith(
+      ['http://example.com', 'http://example.org'],
+      'mockToken'
+    );
+  });
+
+  await waitFor(() => {
+    expect(mockNavigate).toHaveBeenCalledWith('/urls');
   });
 });

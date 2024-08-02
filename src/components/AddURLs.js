@@ -4,12 +4,12 @@ import { useNavigate, useOutletContext } from 'react-router-dom';
 import { useApi } from '../context/ApiContext';
 
 const AddURLs = () => {
-  const [url, setUrl] = useState();
+  const [url, setUrl] = useState('');
   const [urls, setUrls] = useState([]);
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const { addUrls } = useApi(); // Update the useApi to include addUrls method
+  const { addUrls } = useApi();
   const navigate = useNavigate();
   const { jwtToken } = useOutletContext();
 
@@ -19,6 +19,13 @@ const AddURLs = () => {
       Swal.fire({
         title: 'Empty URL',
         text: 'Please enter a URL before adding.',
+        icon: 'error',
+        confirmButtonText: 'OK'
+      });
+    } else if (!isValidUrl(url)) {
+      Swal.fire({
+        title: 'Invalid URL',
+        text: 'Please enter a valid URL starting with http:// or https://.',
         icon: 'error',
         confirmButtonText: 'OK'
       });
@@ -58,6 +65,15 @@ const AddURLs = () => {
       });
   };
 
+  const isValidUrl = urlString => {
+    try {
+      new URL(urlString);
+      return true;
+    } catch {
+      return false;
+    }
+  };
+
   return (
     <>
       <div className="text-center">
@@ -76,11 +92,12 @@ const AddURLs = () => {
                 className="form-control"
                 id="url"
                 name="url"
-                placeholder="Enter URL"
+                placeholder="Enter URL (e.g., http://example.com)"
                 value={url}
                 onChange={e => setUrl(e.target.value)}
                 autoComplete="off"
                 disabled={loading}
+                required
               />
             </div>
             <button type="submit" className="btn btn-primary mt-3" disabled={loading}>
