@@ -21,11 +21,12 @@ const URLDetails = () => {
           console.log('Data refreshed');
         })
         .catch(error => {
-          setError(error.message);
+          const errorMsg = error.response?.data?.message || error.message || 'Unknown error';
+          setError(errorMsg);
           if (!isPeriodic) {
             Swal.fire({
               title: 'Error!',
-              text: error.message,
+              text: errorMsg,
               icon: 'error',
               confirmButtonText: 'OK'
             });
