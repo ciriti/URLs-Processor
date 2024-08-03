@@ -95,7 +95,7 @@ const URLDetails = () => {
               </p>
             </div>
           ) : (
-            <div>Processing...</div>
+            <div>No processed data available for this URL.</div>
           )}
         </div>
       )}
