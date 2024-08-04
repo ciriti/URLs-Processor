@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate, useOutletContext, useParams } from 'react-router-dom';
-import { useApi } from '../context/ApiContext';
+import { useApi } from '../../context/ApiContext';
 import Swal from 'sweetalert2';
 
 const URLDetails = () => {

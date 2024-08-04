@@ -2,21 +2,21 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import '@testing-library/jest-dom';
-import AddUrlsOrLogin from './AddUrlsOrLogin';
 import { useOutletContext } from 'react-router-dom';
+import AddUrlsOrLogin from './AddUrlsOrLogin';
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useOutletContext: jest.fn()
 }));
 
-jest.mock('./AddURLs', () => {
+jest.mock('../AddURLs/AddURLs', () => {
   const AddURLs = () => <div>Add URLs Component</div>;
   AddURLs.displayName = 'AddURLs';
   return AddURLs;
 });
 
-jest.mock('./Login', () => {
+jest.mock('../Login/Login', () => {
   const Login = () => <div>Login Component</div>;
   Login.displayName = 'Login';
   return Login;

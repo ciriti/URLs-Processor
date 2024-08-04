@@ -4,9 +4,9 @@ import { BrowserRouter as Router } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import '@testing-library/jest-dom';
 import Login from './Login';
-import { useApi } from '../context/ApiContext';
+import { useApi } from '../../context/ApiContext';
 
-jest.mock('../context/ApiContext', () => ({
+jest.mock('../../context/ApiContext', () => ({
   useApi: jest.fn()
 }));
 
