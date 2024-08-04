@@ -8,8 +8,8 @@
 1. Clone the repository:
 
    ```sh
-   git clone https://github.com/yourusername/urls-processor.git
-   cd urls-processor
+   git clone https://github.com/ciriti/URLs-Processor.git
+   cd URLs-Processor
    ```
 
 2. Navigate to the `URLs-Processor` directory:
