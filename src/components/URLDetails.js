@@ -72,7 +72,8 @@ const URLDetails = () => {
                 <strong>Page Title:</strong> {details.processed_data.page_title}
               </p>
               <p>
-                <strong>Headings Count:</strong>
+                <strong>Headings Count:</strong>{' '}
+                {Object.keys(details.processed_data.heading_tags_count).length === 0 ? '0' : ''}
               </p>
               <ul>
                 {Object.entries(details.processed_data.heading_tags_count).map(([level, count]) => (

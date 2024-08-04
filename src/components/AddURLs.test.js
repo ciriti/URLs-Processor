@@ -52,7 +52,12 @@ test('renders AddURLs component', () => {
 });
 
 test('handles URL submission error', async () => {
-  mockAddUrls.mockRejectedValueOnce(new Error('Network Error'));
+  // Mock an error response structure
+  mockAddUrls.mockRejectedValueOnce({
+    response: {
+      data: 'Network Error'
+    }
+  });
 
   render(
     <Router>
@@ -71,7 +76,7 @@ test('handles URL submission error', async () => {
   await waitFor(() => {
     expect(Swal.fire).toHaveBeenCalledWith({
       title: 'Error!',
-      text: 'Network Error',
+      text: 'Failed to add urls: Network Error',
       icon: 'error',
       confirmButtonText: 'OK'
     });
