@@ -43,15 +43,6 @@ const AddURLs = () => {
       });
   };
 
-  const isValidUrl = urlString => {
-    try {
-      new URL(urlString);
-      return true;
-    } catch {
-      return false;
-    }
-  };
-
   return (
     <>
       <div className="text-center">
