@@ -21,11 +21,12 @@ const URLDetails = () => {
           console.log('Data refreshed');
         })
         .catch(error => {
-          setError(error.message);
+          const errorMsg = error.response?.data?.message || error.message || 'Unknown error';
+          setError(errorMsg);
           if (!isPeriodic) {
             Swal.fire({
               title: 'Error!',
-              text: error.message,
+              text: errorMsg,
               icon: 'error',
               confirmButtonText: 'OK'
             });
@@ -71,7 +72,8 @@ const URLDetails = () => {
                 <strong>Page Title:</strong> {details.processed_data.page_title}
               </p>
               <p>
-                <strong>Headings Count:</strong>
+                <strong>Headings Count:</strong>{' '}
+                {Object.keys(details.processed_data.heading_tags_count).length === 0 ? '0' : ''}
               </p>
               <ul>
                 {Object.entries(details.processed_data.heading_tags_count).map(([level, count]) => (

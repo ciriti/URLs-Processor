@@ -29,13 +29,6 @@ const AddURLs = () => {
         icon: 'error',
         confirmButtonText: 'OK'
       });
-    } else if (urls.includes(url)) {
-      Swal.fire({
-        title: 'URL Already Added',
-        text: 'The URL you are trying to add is already in the list.',
-        icon: 'warning',
-        confirmButtonText: 'OK'
-      });
     } else {
       setUrls([...urls, url]);
       setUrl('');
@@ -53,9 +46,10 @@ const AddURLs = () => {
         navigate('/urls');
       })
       .catch(err => {
+        const message = err.response && err.response.data ? err.response.data : null;
         Swal.fire({
           title: 'Error!',
-          text: err.message,
+          text: `Failed to add urls: ${message ?? err.message}`,
           icon: 'error',
           confirmButtonText: 'OK'
         });
