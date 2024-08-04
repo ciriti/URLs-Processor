@@ -41,24 +41,3 @@
    ```
 
 2. The application will start on the port specified in the `.env` file (default is 3000). You can access it via `http://localhost:3000`.
-
-## Available Scripts
-
-In the `URLs-Processor` directory, you can run:
-
-### `npm start`
-
-Runs the app in development mode. Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
-
-### `npm test`
-
-Launches the test runner in interactive watch mode.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder. It correctly bundles React in production mode and optimizes the build for the best performance.
-
-## Notes
-
-- Ensure that the `REACT_APP_BACKEND` environment variable is set to the correct backend URL.
-- Adjust the `.env` variables to match your development and production environment settings.
