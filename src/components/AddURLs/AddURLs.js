@@ -15,24 +15,8 @@ const AddURLs = () => {
 
   const handleAddUrl = e => {
     e.preventDefault();
-    if (!url) {
-      Swal.fire({
-        title: 'Empty URL',
-        text: 'Please enter a URL before adding.',
-        icon: 'error',
-        confirmButtonText: 'OK'
-      });
-    } else if (!isValidUrl(url)) {
-      Swal.fire({
-        title: 'Invalid URL',
-        text: 'Please enter a valid URL starting with http:// or https://.',
-        icon: 'error',
-        confirmButtonText: 'OK'
-      });
-    } else {
-      setUrls([...urls, url]);
-      setUrl('');
-    }
+    setUrls([...urls, url]);
+    setUrl('');
   };
 
   const handleSubmit = e => {
