@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { Link, useOutletContext } from 'react-router-dom';
+import React, { useEffect, useState, useCallback } from 'react';
+import { Link, useNavigate, useOutletContext } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import { useApi } from '../context/ApiContext';
 
@@ -8,36 +8,46 @@ const URLs = () => {
   const [loading, setLoading] = useState(true);
   const { fetchUrls, startProcessing, stopProcessing } = useApi();
   const { jwtToken } = useOutletContext();
+  const navigate = useNavigate();
 
-  const fetchData = (isPeriodic = false) => {
-    console.log('refresh');
-    fetchUrls(jwtToken)
-      .then(response => {
-        const sortedUrls = response.data.sort((a, b) => a.id - b.id);
-        setUrls(sortedUrls);
-        setUrls(sortedUrls);
-        console.log('Data refreshed');
-      })
-      .catch(error => {
-        if (!isPeriodic) {
-          Swal.fire({
-            title: 'Error!',
-            text: error.message,
-            icon: 'error',
-            confirmButtonText: 'OK'
-          });
-        }
-      });
-  };
+  const fetchData = useCallback(
+    (isPeriodic = false) => {
+      console.log('refresh');
+      fetchUrls(jwtToken)
+        .then(response => {
+          const sortedUrls = response.data.sort((a, b) => a.id - b.id);
+          setUrls(sortedUrls);
+          console.log('Data refreshed');
+          setLoading(false); // Ensure loading is set to false after data is fetched
+        })
+        .catch(error => {
+          setLoading(false); // Ensure loading is set to false on error
+          if (!isPeriodic) {
+            Swal.fire({
+              title: 'Error!',
+              text: error.message,
+              icon: 'error',
+              confirmButtonText: 'OK'
+            });
+          }
+          if (error.response?.status === 401) {
+            navigate('/'); // Redirect to home if unauthorized
+          }
+        });
+    },
+    [jwtToken, fetchUrls, navigate]
+  );
 
   useEffect(() => {
-    setLoading(true);
-    fetchData();
-    setLoading(false);
-    const interval = setInterval(() => fetchData(true), 2000);
-
-    return () => clearInterval(interval);
-  }, []);
+    if (!jwtToken) {
+      navigate('/');
+    } else {
+      setLoading(true);
+      fetchData();
+      const interval = setInterval(() => fetchData(true), 2000);
+      return () => clearInterval(interval);
+    }
+  }, [fetchData, jwtToken, navigate]);
 
   const handleStart = id => {
     startProcessing(id, jwtToken)
@@ -63,7 +73,6 @@ const URLs = () => {
     stopProcessing(id, jwtToken)
       .then(response => {
         console.log(`stop ok ${JSON.stringify(response.data, null, 2)}`);
-
         const { task_id, state } = response.data;
         setUrls(urls.map(url => (url.id === task_id ? { ...url, state } : url)));
       })
@@ -110,25 +119,12 @@ const URLs = () => {
                   <button onClick={() => handleStart(url.id)} className="btn btn-success btn-sm">
                     Start
                   </button>
-                  {/* {url.state === 'pending' && (
-                    <button onClick={() => handleStart(url.id)} className="btn btn-success btn-sm">
-                      Start
-                    </button>
-                  )} */}
                   <button
                     onClick={() => handleStop(url.id)}
                     className="btn btn-danger btn-sm"
                     style={{ marginLeft: '5px' }}>
                     Stop
                   </button>
-                  {/* {url.state === 'processing' && (
-                    <button
-                      onClick={() => handleStop(url.id)}
-                      className="btn btn-danger btn-sm"
-                      style={{ marginLeft: '5px' }}>
-                      Stop
-                    </button>
-                  )} */}
                 </td>
               </tr>
             ))}

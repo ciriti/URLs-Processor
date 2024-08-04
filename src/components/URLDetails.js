@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { useOutletContext, useParams } from 'react-router-dom';
+import { useNavigate, useOutletContext, useParams } from 'react-router-dom';
 import { useApi } from '../context/ApiContext';
 import Swal from 'sweetalert2';
 
@@ -10,6 +10,7 @@ const URLDetails = () => {
   const [error, setError] = useState(null);
   const { fetchUrl } = useApi();
   const { jwtToken } = useOutletContext();
+  const navigate = useNavigate();
 
   const fetchData = useCallback(
     (isPeriodic = false) => {
@@ -21,6 +22,7 @@ const URLDetails = () => {
           console.log('Data refreshed');
         })
         .catch(error => {
+          setLoading(false); // Ensure loading is set to false on error
           const errorMsg = error.response?.data?.message || error.message || 'Unknown error';
           setError(errorMsg);
           if (!isPeriodic) {
@@ -31,19 +33,26 @@ const URLDetails = () => {
               confirmButtonText: 'OK'
             });
           }
+          if (error.response?.status === 401) {
+            navigate('/'); // Redirect to home if unauthorized
+          }
         });
     },
-    [id, jwtToken, fetchUrl]
+    [id, jwtToken, fetchUrl, navigate]
   );
 
   useEffect(() => {
-    setLoading(true);
-    fetchData();
-    setLoading(false);
+    if (!jwtToken) {
+      navigate('/');
+    } else {
+      setLoading(true);
+      fetchData();
+    }
+
     const interval = setInterval(() => fetchData(true), 2000);
 
     return () => clearInterval(interval);
-  }, [fetchData]);
+  }, [fetchData, jwtToken, navigate]);
 
   return (
     <div>
