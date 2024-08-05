@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Swal from 'sweetalert2';
 import { useNavigate, useOutletContext } from 'react-router-dom';
-import { useApi } from '../context/ApiContext';
+import { useApi } from '../../context/ApiContext';
 
 const AddURLs = () => {
   const [url, setUrl] = useState('');
@@ -15,24 +15,8 @@ const AddURLs = () => {
 
   const handleAddUrl = e => {
     e.preventDefault();
-    if (!url) {
-      Swal.fire({
-        title: 'Empty URL',
-        text: 'Please enter a URL before adding.',
-        icon: 'error',
-        confirmButtonText: 'OK'
-      });
-    } else if (!isValidUrl(url)) {
-      Swal.fire({
-        title: 'Invalid URL',
-        text: 'Please enter a valid URL starting with http:// or https://.',
-        icon: 'error',
-        confirmButtonText: 'OK'
-      });
-    } else {
-      setUrls([...urls, url]);
-      setUrl('');
-    }
+    setUrls([...urls, url]);
+    setUrl('');
   };
 
   const handleSubmit = e => {
@@ -57,15 +41,6 @@ const AddURLs = () => {
       .finally(() => {
         setLoading(false);
       });
-  };
-
-  const isValidUrl = urlString => {
-    try {
-      new URL(urlString);
-      return true;
-    } catch {
-      return false;
-    }
   };
 
   return (

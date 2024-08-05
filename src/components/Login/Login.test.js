@@ -4,9 +4,9 @@ import { BrowserRouter as Router } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import '@testing-library/jest-dom';
 import Login from './Login';
-import { useApi } from '../context/ApiContext';
+import { useApi } from '../../context/ApiContext';
 
-jest.mock('../context/ApiContext', () => ({
+jest.mock('../../context/ApiContext', () => ({
   useApi: jest.fn()
 }));
 
@@ -43,11 +43,8 @@ test('renders Login component', () => {
   );
 
   expect(screen.getByRole('heading', { name: /Login/i })).toBeInTheDocument();
-
   expect(screen.getByLabelText(/Username/i)).toBeInTheDocument();
-
   expect(screen.getByLabelText(/Password/i)).toBeInTheDocument();
-
   expect(screen.getByRole('button', { name: /Login/i })).toBeInTheDocument();
 });
 
@@ -84,7 +81,11 @@ test('handles successful login', async () => {
 
 test('handles login error', async () => {
   const errorMessage = 'Network Error';
-  mockAuthenticate.mockRejectedValueOnce(new Error(errorMessage));
+  mockAuthenticate.mockRejectedValueOnce({
+    response: {
+      data: { message: errorMessage }
+    }
+  });
 
   render(
     <Router>

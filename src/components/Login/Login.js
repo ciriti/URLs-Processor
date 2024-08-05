@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, useOutletContext } from 'react-router-dom';
-import { useApi } from '../context/ApiContext';
+import { useApi } from '../../context/ApiContext';
 import Swal from 'sweetalert2';
 
 const Login = () => {
@@ -25,10 +25,10 @@ const Login = () => {
         }
       })
       .catch(error => {
-        console.log(error.message);
+        const message = error.response && error.response.data ? error.response.data.message : null;
         Swal.fire({
           title: 'Error!',
-          text: error.message,
+          text: message,
           icon: 'error',
           confirmButtonText: 'OK'
         });

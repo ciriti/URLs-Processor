@@ -1,7 +1,7 @@
 import React from 'react';
 import { useOutletContext } from 'react-router-dom';
-import AddURLs from './AddURLs';
-import Login from './Login';
+import AddURLs from '../AddURLs/AddURLs';
+import Login from '../Login/Login';
 
 const AddUrlsOrLogin = () => {
   const { jwtToken } = useOutletContext();
