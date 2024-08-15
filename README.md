@@ -11,7 +11,6 @@
 2. [Running the Application](#running-the-application)
 3. [Project Structure](#project-structure)
 4. [Usage](#usage)
-5. [Contributing](#contributing)
 6. [License](#license)
 
 ## Installation
@@ -70,10 +69,6 @@ The project is organized into several key components:
 ## Usage
 
 This section should include instructions on how to use the application's features, such as adding URLs, viewing URL details, and managing user authentication.
-
-## Contributing
-
-Contributions are welcome! Please read the contributing guidelines to get started.
 
 ## License
 
